@@ -34,7 +34,7 @@ const ForecastSearch = ({
       <SearchCity
         onChangeText={toggleSearch === 'city' ? setCity : setPostalCode}
         value={toggleSearch === 'city' ? city : postalCode}
-        placeholder="Enter your City name"
+        placeholder="Enter city name"
         onSubmitEditing={handleSubmit}
       />
     </Container>

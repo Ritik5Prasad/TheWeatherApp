@@ -1,9 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 
 const CurrentForecast = ({ currentWeather }) => {
+  const {currentCity}=useSelector(state=>state.weather)
   return (
     <CurrentView>
+      <Timezone>{currentCity}</Timezone>
       <Timezone>{currentWeather.timezone}</Timezone>
       <MainInfoContainer>
         <CurrentTempView>
@@ -155,6 +158,8 @@ const Details = styled.Text`
   color: black;
   font-size: 15px;
   text-transform: capitalize;
+  align-items: center;
+  text-align: center;
 `;
 
 export default CurrentForecast;

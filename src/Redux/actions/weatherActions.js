@@ -8,7 +8,7 @@ export const getWeather = (city, onSuccess = () => {}, onError = () => {}) => {
       let lat=""
       let long=""
       const latlong = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${openweathermap_api_key}`);
-      console.log(latlong)
+      // console.log(latlong)
       if (!latlong.ok) {
         const res = await latlong.json();
         alert("Enter valid city name")

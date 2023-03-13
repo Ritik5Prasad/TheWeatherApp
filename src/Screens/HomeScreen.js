@@ -1,6 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, ImageBackground, Keyboard, ScrollView, Text, View} from 'react-native';
-import {openweathermap_api_key} from '../../config.json';
+import React, {useState} from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Alert,
+  ImageBackground,
+  Keyboard,
+  Text,
+  View,
+} from 'react-native';
 import bgImg from '../assets/4.png';
 import styled from 'styled-components/native';
 import ForecastSearch from '../components/ForecastSearch';
@@ -8,18 +15,15 @@ import CurrentForecast from '../components/CurrentForecast';
 import DailyForecast from '../components/DailyForecast';
 import {useDispatch, useSelector} from 'react-redux';
 import {getWeather} from '../Redux/actions/weatherActions';
+import {useNavigation} from '@react-navigation/native';
 
 function HomeScreen() {
   const [toggleSearch, setToggleSearch] = useState('city');
   const [city, setCity] = useState('');
-
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const {currentCity,weatherData} = useSelector(state => state.weather);
-  const s=useSelector(state=>state)
-  console.log(s)
-  
+  const {currentCity, weatherData} = useSelector(state => state.weather);
+  const navigation = useNavigation();
   //fetch lat long by city
   const fetchLatLongHandler = () => {
     if (city === '') {
@@ -36,53 +40,44 @@ function HomeScreen() {
         () => setLoading(false),
       ),
     );
-    setSearch('');
+    setCity('');
     Keyboard.dismiss();
   };
-
 
   return (
     <Container>
       <ImageBackground source={bgImg} style={{width: '100%', height: '100%'}}>
-       {loading ? 
-       <ActivityIndicator /> :
-        <ScrollView>
-          <ForecastSearch
-            city={city}
-            setCity={setCity}
-            fetchLatLongHandler={fetchLatLongHandler}
-            toggleSearch={toggleSearch}
-            setToggleSearch={setToggleSearch}
-          
-          />
-          <Text>{currentCity}</Text>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <View>
+            <ForecastSearch
+              city={city}
+              setCity={setCity}
+              fetchLatLongHandler={fetchLatLongHandler}
+              toggleSearch={toggleSearch}
+              setToggleSearch={setToggleSearch}
+            />
 
-          <CurrentForecast
-            currentWeather={weatherData}
-            timezone={weatherData.timezone}
-            
-          />
+            <CurrentForecast
+              currentWeather={weatherData}
+              timezone={weatherData.timezone}
+            />
 
-          <ScrollView style={{flex: 1}}>
-            <FutureForecastContainer>
-
-            
-
-              {weatherData.daily ? (
-                weatherData.daily.map((day, index) => {
-                  if (index !== 0) {
-                    return (
-                      <DailyForecast key={day.dt} day={day} index={index} />
-                    );
-                  }
-                })
-              ) : (
-                <NoWeather>No Weather to show</NoWeather>
-              )}
-            </FutureForecastContainer>
-          </ScrollView>
-        </ScrollView>
-        }
+            <FlatList
+              data={weatherData.daily.slice(0, 2)}
+              initialNumToRender={4}
+              key={item => item.day}
+              renderItem={({item}) => <DailyForecast day={item} />}
+            />
+            <DayContainer
+              onPress={() => {
+                navigation.navigate('ForecastScreen');
+              }}>
+              <Text>View Full Forecast</Text>
+            </DayContainer>
+          </View>
+        )}
       </ImageBackground>
     </Container>
   );
@@ -96,10 +91,16 @@ const NoWeather = styled.Text`
   text-align: center;
   color: white;
 `;
-
-const FutureForecastContainer = styled.View`
+const DayContainer = styled.TouchableOpacity`
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  margin: 10px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
+  width: 95%;
+  max-width: 478px;
 `;
 export default HomeScreen;

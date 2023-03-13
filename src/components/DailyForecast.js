@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import moment from "moment";
 
 const DailyForecast = ({ day, index }) => {
+  
   return (
     <DayContainer>
       <DateContainer>
@@ -14,7 +15,7 @@ const DailyForecast = ({ day, index }) => {
           source={{
             uri: `http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`,
           }}
-          resizeMode={"contain"} // cover or contain its upto you view look
+          resizeMode={"contain"}
         />
         <Text>{day.weather[0].description}</Text>
       </IconTempView>
