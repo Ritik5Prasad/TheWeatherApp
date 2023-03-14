@@ -1,9 +1,9 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import styled from "styled-components/native";
+import React from 'react';
+import {useSelector} from 'react-redux';
+import styled from 'styled-components/native';
 
-const CurrentForecast = ({ currentWeather }) => {
-  const {currentCity}=useSelector(state=>state.weather)
+const CurrentForecast = ({currentWeather}) => {
+  const {currentCity} = useSelector(state => state.weather);
   return (
     <CurrentView>
       <Timezone>{currentCity}</Timezone>
@@ -15,7 +15,7 @@ const CurrentForecast = ({ currentWeather }) => {
               source={{
                 uri: `http://openweathermap.org/img/wn/${currentWeather.current.weather[0].icon}@2x.png`,
               }}
-              resizeMode={"contain"}
+              resizeMode={'contain'}
             />
           )}
           <CurrentDegrees>
@@ -71,7 +71,7 @@ const CurrentForecast = ({ currentWeather }) => {
           <DetailsBox>
             <Label>Rain</Label>
             <Details>
-              {currentWeather.daily > 0 ? currentWeather.daily[0].rain : "0"} MM
+              {currentWeather.daily > 0 ? currentWeather.daily[0].rain : '0'} MM
             </Details>
           </DetailsBox>
         </Row>
@@ -85,6 +85,7 @@ const CurrentView = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
+  padding-top: 0px;
 `;
 
 const CurrentTempView = styled.View`
@@ -126,7 +127,8 @@ const Timezone = styled.Text`
   display: flex;
   justify-content: center;
   margin-top: 10px;
-  font-size: 15px;
+  font-size: 23px;
+  font-family: 'Montserrat-SemiBold';
 `;
 
 const CurrentDegrees = styled.Text`

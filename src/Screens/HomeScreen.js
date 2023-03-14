@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,35 +7,65 @@ import {
   Keyboard,
   Text,
   View,
+  StyleSheet,
+  RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import bgImg from '../assets/4.png';
 import styled from 'styled-components/native';
-import ForecastSearch from '../components/ForecastSearch';
 import CurrentForecast from '../components/CurrentForecast';
 import DailyForecast from '../components/DailyForecast';
 import {useDispatch, useSelector} from 'react-redux';
 import {getWeather} from '../Redux/actions/weatherActions';
 import {useNavigation} from '@react-navigation/native';
-
+import NetInfo from '@react-native-community/netinfo';
+import {refreshData} from '../Redux/actions/refreshActions';
 function HomeScreen() {
-  const [toggleSearch, setToggleSearch] = useState('city');
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchLatLongHandler();
+    setRefreshing(false);
+  }, []);
+
+  NetInfo.addEventListener(networkState => {});
+  NetInfo.fetch().then(networkState => {});
+  const [isOffline, setOfflineStatus] = useState(true);
+
+  useEffect(() => {
+    const removeNetInfoSubscription = NetInfo.addEventListener(state => {
+      const offline = !(state.isConnected && state.isInternetReachable);
+      setOfflineStatus(offline);
+      // console.log("Is Offline",offline);
+    });
+
+    return () => removeNetInfoSubscription();
+  }, [isOffline]);
+
   const [city, setCity] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const {currentCity, weatherData} = useSelector(state => state.weather);
+  const {currentCity, weatherData, cities} = useSelector(
+    state => state.weather,
+  );
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (isOffline == false) {
+      fetchLatLongHandler();
+    }
+  }, [isOffline]);
+
   //fetch lat long by city
   const fetchLatLongHandler = () => {
-    if (city === '') {
-      return Alert.alert('Validation', 'City name is required!', [
-        {text: 'OK'},
-      ]);
-    }
-
+    console.log('Fetching');
     setLoading(true);
     dispatch(
-      getWeather(
-        city,
+      refreshData(
+        currentCity,
         () => setLoading(false),
         () => setLoading(false),
       ),
@@ -47,26 +77,27 @@ function HomeScreen() {
   return (
     <Container>
       <ImageBackground source={bgImg} style={{width: '100%', height: '100%'}}>
-        {loading ? (
+        <TouchableOpacity
+          style={{padding: 10}}
+          onPress={() => navigation.navigate('CityScreen')}>
+          <Text style={{fontSize: 30, color: 'white'}}>+</Text>
+        </TouchableOpacity>
+        {loading && weatherData ? (
           <ActivityIndicator />
         ) : (
           <View>
-            <ForecastSearch
-              city={city}
-              setCity={setCity}
-              fetchLatLongHandler={fetchLatLongHandler}
-              toggleSearch={toggleSearch}
-              setToggleSearch={setToggleSearch}
-            />
-
-            <CurrentForecast
-              currentWeather={weatherData}
-              timezone={weatherData.timezone}
-            />
-
             <FlatList
-              data={weatherData.daily.slice(0, 2)}
+              data={weatherData && weatherData.daily.slice(1, 4)}
               initialNumToRender={4}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              ListHeaderComponent={
+                <CurrentForecast
+                  currentWeather={weatherData}
+                  timezone={weatherData.timezone}
+                />
+              }
               key={item => item.day}
               renderItem={({item}) => <DailyForecast day={item} />}
             />
@@ -74,7 +105,7 @@ function HomeScreen() {
               onPress={() => {
                 navigation.navigate('ForecastScreen');
               }}>
-              <Text>View Full Forecast</Text>
+              <Text style={styles.font}>5-Day Forecast</Text>
             </DayContainer>
           </View>
         )}
@@ -82,6 +113,12 @@ function HomeScreen() {
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  font: {
+    fontFamily: 'Montserrat-Medium',
+  },
+});
 
 const Container = styled.View`
   flex: 1;

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   ImageBackground,
@@ -22,10 +22,24 @@ import {useDispatch} from 'react-redux';
 import logo from '../assets/edit.png'
 import Video from 'react-native-video';
 import bgImage from '../assets/4.png'
-
+import NetInfo from '@react-native-community/netinfo';
 const {width, height} = Dimensions.get('window');
 
 function OnBoardingScreen() {
+  NetInfo.addEventListener(networkState => {});
+  NetInfo.fetch().then(networkState => {});
+  const [isOffline, setOfflineStatus] = useState(true);
+
+  useEffect(() => {
+    const removeNetInfoSubscription = NetInfo.addEventListener(state => {
+      const offline = !(state.isConnected && state.isInternetReachable);
+      setOfflineStatus(offline);
+      console.log("Is Offline",offline);
+    });
+
+    return () => removeNetInfoSubscription();
+  }, [isOffline]);
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -37,6 +51,7 @@ function OnBoardingScreen() {
     }
 
     setLoading(true);
+    if(isOffline==false){
     await dispatch(
       getWeather(
         city,
@@ -44,9 +59,13 @@ function OnBoardingScreen() {
         () => setLoading(false),
       ),
     );
+  }else{
+    alert("No Internet")
+  }
     setCity('');
     Keyboard.dismiss();
     navigation.navigate('Home');
+    
   };
 
   const [city, setCity] = useState('');
@@ -63,11 +82,9 @@ function OnBoardingScreen() {
           <Image source={logo} style={{width:'100%',height:400,tintColor:'white',}}  />
         </View>
         <Text style={styles.footerText}>
-          Get 7 Days Forecast Weather Report
+          Get 5 Days Forecast Weather Report
         </Text>
-        <Text style={[styles.footerText,{marginBottom:80}]}>
-         
-        </Text>
+        
         <Wrapper>
           <TextInput value={city} onChangeText={setCity} style={styles.input} placeholder="Enter your city name" placeholderTextColor='#edebe8' />
           <TouchableOpacity onPress={fetchLatLongHandler} style={styles.btn}>
@@ -148,6 +165,7 @@ const Wrapper = styled.View`
   padding: 20px;
   align-items: center;
   flex-direction: column;
+  margin-top:12px;
 `;
 
 export default OnBoardingScreen;
