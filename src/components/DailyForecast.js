@@ -16,7 +16,9 @@ const DailyForecast = ({day, index}) => {
           }}
           resizeMode={'contain'}
         />
-        <Text>{day.weather[0].description}</Text>
+        <Text style={{
+          fontFamily:'Montserrat-Medium'
+        }}>{day.weather[0].description}</Text>
       </IconTempView>
       <DegreeView>
         <Degree>{Math.round(day.temp.max)}°C</Degree>
@@ -47,6 +49,7 @@ const WeekDay = styled.Text`
   font-size: 24px;
   text-align: center;
   margin: 3px;
+  font-family:'Montserrat-Medium'
 `;
 
 const IconTempView = styled.View`
@@ -70,6 +73,7 @@ const DegreeView = styled.View`
 
 const Degree = styled.Text`
   font-size: 24px;
+  font-family:'Montserrat-Medium'
 `;
 
 const FeelsLike = styled.Text`

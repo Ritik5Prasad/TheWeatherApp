@@ -17,7 +17,7 @@ const FullForecast = ({day, index}) => {
           <DetailsBox>
             <Label>Feels</Label>
             <Details>
-              {day.current && Math.round(day.current.feels_like)}
+              {day && Math.round(day.feels_like.day)}
               °C
             </Details>
           </DetailsBox>
@@ -59,7 +59,11 @@ const FullForecast = ({day, index}) => {
           }}
           resizeMode={'contain'}
         />
-        <Text>{day.weather[0].description}</Text>
+        <Text 
+        style={{
+          fontFamily:'Montserrat-Medium'
+        }}
+        >{day.weather[0].description}</Text>
       </IconTempView>
       <DegreeView>
         <Degree>{Math.round(day.temp.max)}°C</Degree>
@@ -78,6 +82,8 @@ const DayContainer = styled.View`
   margin: 20px;
   flex: 1;
   width: 85%;
+  
+  
 `;
 
 const DateContainer = styled.View`
@@ -88,6 +94,7 @@ const WeekDay = styled.Text`
   font-size: 24px;
   text-align: center;
   margin: 3px;
+  font-family:'Montserrat-Medium'
 `;
 const CurrentView = styled.View`
   display: flex;
@@ -162,6 +169,8 @@ const DetailsBox = styled.View`
 
 const Label = styled.Text`
   font-size: 18px;
+  font-family:'Montserrat-Medium'
+  
 `;
 
 const Details = styled.Text`
@@ -170,6 +179,8 @@ const Details = styled.Text`
   text-transform: capitalize;
   align-items: center;
   text-align: center;
+  font-family:'Montserrat-Medium';
+  margin-top:12px;
 `;
 
 const IconTempView = styled.View`
@@ -187,6 +198,7 @@ const DegreeView = styled.View`
 
 const Degree = styled.Text`
   font-size: 24px;
+  font-family:'Montserrat-Medium'
 `;
 
 const FeelsLike = styled.Text`

@@ -104,6 +104,7 @@ const Description = styled.Text`
   color: white;
   font-size: 15px;
   text-transform: capitalize;
+  font-family:'Montserrat-Medium'
 `;
 
 const SecondaryInfoContainer = styled.View`
@@ -137,6 +138,7 @@ const CurrentDegrees = styled.Text`
   justify-content: center;
   margin-top: 10px;
   font-size: 60px;
+  font-family:'Montserrat-Medium'
 `;
 
 const Row = styled.View`
@@ -153,7 +155,8 @@ const DetailsBox = styled.View`
 `;
 
 const Label = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
+  font-family:'Montserrat-Medium'
 `;
 
 const Details = styled.Text`
@@ -162,6 +165,7 @@ const Details = styled.Text`
   text-transform: capitalize;
   align-items: center;
   text-align: center;
+  font-family:'Montserrat-Medium'
 `;
 
 export default CurrentForecast;

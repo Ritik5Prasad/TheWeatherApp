@@ -12,16 +12,16 @@ import {
   ScrollView,
   Image,
   StatusBar,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import styled from 'styled-components/native';
 import {useNavigation} from '@react-navigation/native';
 import {getWeather} from '../Redux/actions/weatherActions';
 import {useDispatch} from 'react-redux';
-import logo from '../assets/edit.png'
+import logo from '../assets/edit.png';
 import Video from 'react-native-video';
-import bgImage from '../assets/4.png'
+import bgImage from '../assets/4.png';
 import NetInfo from '@react-native-community/netinfo';
 const {width, height} = Dimensions.get('window');
 
@@ -34,7 +34,7 @@ function OnBoardingScreen() {
     const removeNetInfoSubscription = NetInfo.addEventListener(state => {
       const offline = !(state.isConnected && state.isInternetReachable);
       setOfflineStatus(offline);
-      console.log("Is Offline",offline);
+      console.log('Is Offline', offline);
     });
 
     return () => removeNetInfoSubscription();
@@ -51,21 +51,23 @@ function OnBoardingScreen() {
     }
 
     setLoading(true);
-    if(isOffline==false){
-    await dispatch(
-      getWeather(
-        city,
-        () => setLoading(false),
-        () => setLoading(false),
-      ),
-    );
-  }else{
-    alert("No Internet")
-  }
+    if (isOffline == false) {
+      await dispatch(
+        getWeather(
+          city,
+          () => setLoading(false),
+          () => setLoading(false),
+        ),
+      );
+    } else {
+      alert('No Internet');
+    }
     setCity('');
     Keyboard.dismiss();
-    navigation.navigate('Home');
-    
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'Home'}],
+    });
   };
 
   const [city, setCity] = useState('');
@@ -73,31 +75,48 @@ function OnBoardingScreen() {
   return (
     <View>
       <StatusBar hidden />
-    <ImageBackground source={bgImage} style={{width: '100%', height: '100%'}}>
-    <KeyboardAvoidingView >
+      <Video
+        source={require('../assets/v.mp4')}
+        style={styles.backgroundVideo}
+        muted={true}
+        repeat={true}
+        resizeMode={'cover'}
+        rate={1.0}
+        ignoreSilentSwitch={'obey'}
+      />
+      <KeyboardAvoidingView>
+        <ScrollView>
+          <View
+            style={{
+              alignItems: 'center',
+              borderRadius: 200,
+              height: 320,
+              width: 400,
+            }}>
+            <Image
+              source={logo}
+              style={{width: '100%', height: 400, tintColor: 'white'}}
+            />
+          </View>
+          <Text style={styles.footerText}>
+            Get 5 Days Forecast Weather Report
+          </Text>
 
-      <ScrollView>
-
-        <View style={{alignItems:'center',borderRadius:200,height:320,width:400}}>
-          <Image source={logo} style={{width:'100%',height:400,tintColor:'white',}}  />
-        </View>
-        <Text style={styles.footerText}>
-          Get 5 Days Forecast Weather Report
-        </Text>
-        
-        <Wrapper>
-          <TextInput value={city} onChangeText={setCity} style={styles.input} placeholder="Enter your city name" placeholderTextColor='#edebe8' />
-          <TouchableOpacity onPress={fetchLatLongHandler} style={styles.btn}>
-            <Text style={styles.btnColor}>Get Report</Text>
-          </TouchableOpacity>
-        </Wrapper>
-      
-      </ScrollView>
-      </KeyboardAvoidingView> 
-      </ImageBackground>
-      {/* <Text style={styles.footerText}>® Made By - Ritik</Text> */}
+          <Wrapper>
+            <TextInput
+              value={city}
+              onChangeText={setCity}
+              style={styles.input}
+              placeholder="Enter your city name"
+              placeholderTextColor="#edebe8"
+            />
+            <TouchableOpacity onPress={fetchLatLongHandler} style={styles.btn}>
+              <Text style={styles.btnColor}>Get Report</Text>
+            </TouchableOpacity>
+          </Wrapper>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
-    
   );
 }
 
@@ -110,8 +129,8 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     color: 'white',
     padding: 10,
-    fontSize:18,
-    fontFamily:'Montserrat-Bold'
+    fontSize: 18,
+    fontFamily: 'Montserrat-Bold',
   },
   container: {
     flex: 1,
@@ -144,19 +163,17 @@ const styles = StyleSheet.create({
     margin: 20,
     borderColor: 'white',
     borderWidth: 1,
-
   },
   footerText: {
-
     fontSize: 26,
-    fontFamily:'Montserrat-Bold',
+    fontFamily: 'Montserrat-Bold',
     color: 'white',
     textAlign: 'center',
     alignSelf: 'center',
   },
   btnColor: {
     color: 'white',
-    fontFamily:'Montserrat-Bold'
+    fontFamily: 'Montserrat-Bold',
   },
 });
 
@@ -165,7 +182,7 @@ const Wrapper = styled.View`
   padding: 20px;
   align-items: center;
   flex-direction: column;
-  margin-top:12px;
+  margin-top: 12px;
 `;
 
 export default OnBoardingScreen;

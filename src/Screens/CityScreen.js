@@ -87,7 +87,9 @@ function CityScreen() {
               weatherData: item.weatherData,
               currentCity: item.cityName,
             });
-          }}>
+          }}
+          style={{width:'80%'}}
+          >
           <Text style={styles.font}>{item.cityName}</Text>
         </TouchableOpacity>
         <TouchableOpacity
