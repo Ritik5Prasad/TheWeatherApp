@@ -23,7 +23,8 @@ import logo from '../assets/edit.png';
 import Video from 'react-native-video';
 import bgImage from '../assets/4.png';
 import NetInfo from '@react-native-community/netinfo';
-const {width, height} = Dimensions.get('window');
+
+const {width, height} = Dimensions.get('screen');
 
 function OnBoardingScreen() {
   NetInfo.addEventListener(networkState => {});
@@ -82,6 +83,7 @@ function OnBoardingScreen() {
         repeat={true}
         resizeMode={'cover'}
         rate={1.0}
+        
         ignoreSilentSwitch={'obey'}
       />
       <KeyboardAvoidingView>
