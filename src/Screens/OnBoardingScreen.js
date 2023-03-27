@@ -18,57 +18,71 @@ import {BlurView} from '@react-native-community/blur';
 import styled from 'styled-components/native';
 import {useNavigation} from '@react-navigation/native';
 import {getWeather} from '../Redux/actions/weatherActions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import logo from '../assets/edit.png';
 import Video from 'react-native-video';
 import bgImage from '../assets/4.png';
 import NetInfo from '@react-native-community/netinfo';
-
+import Geolocation from '@react-native-community/geolocation';
 const {width, height} = Dimensions.get('screen');
 
 function OnBoardingScreen() {
+  const [permissionAllowed, setPermissionAllowed] = React.useState(true);
+  const [longitude, setLongitude] = React.useState('');
+  const [latitude, setLatiitude] = React.useState('');
+  const s=useSelector(state => state)
+  console.log(s)
+
+  Geolocation.setRNConfiguration({
+    config: {
+      skipPermissionRequests: permissionAllowed,
+      authorizationLevel: 'always' | 'whenInUse' | 'auto',
+      locationProvider: 'playServices' | 'android' | 'auto',
+    },
+  });
+  
+
   NetInfo.addEventListener(networkState => {});
   NetInfo.fetch().then(networkState => {});
   const [isOffline, setOfflineStatus] = useState(true);
 
   useEffect(() => {
-    const removeNetInfoSubscription = NetInfo.addEventListener(state => {
-      const offline = !(state.isConnected && state.isInternetReachable);
-      setOfflineStatus(offline);
-      console.log('Is Offline', offline);
-    });
-
-    return () => removeNetInfoSubscription();
-  }, [isOffline]);
+    fetchLatLongHandler()
+  }, []);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const fetchLatLongHandler = async () => {
-    if (city === '') {
-      return Alert.alert('Validation', 'City name is required!', [
-        {text: 'OK'},
-      ]);
-    }
+    // if (city === '') {
+    //   return Alert.alert('Validation', 'City name is required!', [
+    //     {text: 'OK'},
+    //   ]);
+    // }
 
     setLoading(true);
-    if (isOffline == false) {
+    await Geolocation.getCurrentPosition(async info => {
       await dispatch(
         getWeather(
           city,
-          () => setLoading(false),
+          info.coords.longitude,
+          info.coords.latitude,
+          () => {
+           
+          },
           () => setLoading(false),
         ),
       );
-    } else {
-      alert('No Internet');
-    }
+    });
+      
+  
     setCity('');
     Keyboard.dismiss();
     navigation.reset({
       index: 0,
       routes: [{name: 'Home'}],
     });
+    
   };
 
   const [city, setCity] = useState('');
@@ -83,7 +97,6 @@ function OnBoardingScreen() {
         repeat={true}
         resizeMode={'cover'}
         rate={1.0}
-        
         ignoreSilentSwitch={'obey'}
       />
       <KeyboardAvoidingView>
@@ -101,7 +114,8 @@ function OnBoardingScreen() {
             />
           </View>
           <Text style={styles.footerText}>
-            Get 5 Days Forecast Weather Report
+            Get 5 Days Forecast Weather Report 
+            
           </Text>
 
           <Wrapper>
@@ -114,6 +128,7 @@ function OnBoardingScreen() {
             />
             <TouchableOpacity onPress={fetchLatLongHandler} style={styles.btn}>
               <Text style={styles.btnColor}>Get Report</Text>
+
             </TouchableOpacity>
           </Wrapper>
         </ScrollView>

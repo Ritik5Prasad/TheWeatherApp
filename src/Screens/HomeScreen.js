@@ -20,9 +20,12 @@ import {getWeather} from '../Redux/actions/weatherActions';
 import {useNavigation} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import {refreshData} from '../Redux/actions/refreshActions';
+
 function HomeScreen() {
 
   const [refreshing, setRefreshing] = React.useState(false);
+
+  
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -48,16 +51,18 @@ function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const {currentCity, weatherData, cities} = useSelector(
-    state => state.weather,
+    state => state.weather
   );
+  console.log(weatherData)
+
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (isOffline == false) {
-      fetchLatLongHandler();
-    }
-  }, [isOffline]);
+  // useEffect(() => {
+  //   if (isOffline == false) {
+  //     fetchLatLongHandler();
+  //   }
+  // }, [isOffline]);
 
   //fetch lat long by city
   const fetchLatLongHandler = () => {
@@ -82,7 +87,7 @@ function HomeScreen() {
           onPress={() => navigation.navigate('CityScreen')}>
           <Text style={{fontSize: 30, color: 'white'}}>+</Text>
         </TouchableOpacity>
-        {loading && weatherData ? (
+        {loading && weatherData.timezone==null ? (
           <ActivityIndicator />
         ) : (
           <View>
