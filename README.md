@@ -8,5 +8,5 @@ React Navigation 6 @latest
 Install Dependencies
 
 ```bash
-npm install
+npm install --force
 ```
