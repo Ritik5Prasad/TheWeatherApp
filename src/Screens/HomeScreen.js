@@ -53,7 +53,7 @@ function HomeScreen() {
   const {currentCity, weatherData, cities} = useSelector(
     state => state.weather
   );
-  console.log(weatherData)
+ 
 
 
   const navigation = useNavigation();

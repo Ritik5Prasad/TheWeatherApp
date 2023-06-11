@@ -7,19 +7,19 @@ const CurrentForecast = ({currentWeather}) => {
   return (
     <CurrentView>
       <Timezone>{currentCity}</Timezone>
-      <Timezone>{currentWeather.timezone}</Timezone>
+      <Timezone>{currentWeather?.timezone}</Timezone>
       <MainInfoContainer>
         <CurrentTempView>
-          {currentWeather.current && (
+          {currentWeather?.current && (
             <WeatherIcon
               source={{
-                uri: `http://openweathermap.org/img/wn/${currentWeather.current.weather[0].icon}@2x.png`,
+                uri: `http://openweathermap.org/img/wn/${currentWeather?.current.weather[0].icon}@2x.png`,
               }}
               resizeMode={'contain'}
             />
           )}
           <CurrentDegrees>
-            {Math.round(currentWeather.current && currentWeather.current.temp)}
+            {Math.round(currentWeather?.current && currentWeather.current.temp)}
             °C
           </CurrentDegrees>
         </CurrentTempView>
@@ -33,7 +33,7 @@ const CurrentForecast = ({currentWeather}) => {
           <DetailsBox>
             <Label>Feels</Label>
             <Details>
-              {currentWeather.current &&
+              {currentWeather?.current &&
                 Math.round(currentWeather.current.feels_like)}
               °C
             </Details>
@@ -41,7 +41,7 @@ const CurrentForecast = ({currentWeather}) => {
           <DetailsBox>
             <Label>Low</Label>
             <Details>
-              {currentWeather.daily &&
+              {currentWeather?.daily &&
                 Math.round(currentWeather.daily[0].temp.min)}
               °C
             </Details>

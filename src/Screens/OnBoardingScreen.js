@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
-  ImageBackground,
   Keyboard,
   StyleSheet,
   Text,
@@ -14,25 +13,24 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
-import {BlurView} from '@react-native-community/blur';
+
 import styled from 'styled-components/native';
 import {useNavigation} from '@react-navigation/native';
 import {getWeather} from '../Redux/actions/weatherActions';
 import {useDispatch, useSelector} from 'react-redux';
 import logo from '../assets/edit.png';
 import Video from 'react-native-video';
-import bgImage from '../assets/4.png';
 import NetInfo from '@react-native-community/netinfo';
 import Geolocation from '@react-native-community/geolocation';
-const {width, height} = Dimensions.get('screen');
+const {height} = Dimensions.get('screen');
 
 function OnBoardingScreen() {
   const [permissionAllowed, setPermissionAllowed] = React.useState(true);
-  const [longitude, setLongitude] = React.useState('');
-  const [latitude, setLatiitude] = React.useState('');
-  const s=useSelector(state => state)
-  console.log(s)
-
+  const [city, setCity] = useState('');
+  const unammed=""
+  const [loading, setLoading] = useState(false);
+  const manual=true
+  const auto=false
   Geolocation.setRNConfiguration({
     config: {
       skipPermissionRequests: permissionAllowed,
@@ -40,53 +38,62 @@ function OnBoardingScreen() {
       locationProvider: 'playServices' | 'android' | 'auto',
     },
   });
-  
 
   NetInfo.addEventListener(networkState => {});
   NetInfo.fetch().then(networkState => {});
-  const [isOffline, setOfflineStatus] = useState(true);
 
-  useEffect(() => {
-    fetchLatLongHandler()
-  }, []);
+  // useEffect(() => {
+  //   fetchLatLongHandler();
+  // }, []);
 
-  const navigation = useNavigation();
+
   const dispatch = useDispatch();
 
-  const fetchLatLongHandler = async () => {
-    // if (city === '') {
-    //   return Alert.alert('Validation', 'City name is required!', [
-    //     {text: 'OK'},
-    //   ]);
-    // }
+  // const fetchLatLongHandler = async () => {
+
+  //   setLoading(true);
+  //   await Geolocation.getCurrentPosition(async info => {
+  //     await dispatch(
+  //       getWeather(
+  //         unammed,
+  //         info.coords.longitude,
+  //         info.coords.latitude,
+  //         auto,
+  //         () => {},
+  //         () => setLoading(false),
+  //       ),
+  //     );
+  //   });
+
+  //   setCity('');
+  //   Keyboard.dismiss();
+  // };
+
+  const fetchByName = async () => {
+    if (city === '') {
+      return Alert.alert('Validation', 'City name is required!', [
+        {text: 'OK'},
+      ]);
+    }
+   
 
     setLoading(true);
-    await Geolocation.getCurrentPosition(async info => {
-      await dispatch(
-        getWeather(
-          city,
-          info.coords.longitude,
-          info.coords.latitude,
-          () => {
-           
-          },
-          () => setLoading(false),
-        ),
-      );
-    });
-      
-  
+    await dispatch(
+      getWeather(
+        city,
+        "",
+        "",
+        manual,
+        () => {},
+        () => setLoading(false),
+      ),
+    );
+
     setCity('');
     Keyboard.dismiss();
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Home'}],
-    });
-    
   };
 
-  const [city, setCity] = useState('');
-  const [loading, setLoading] = useState(false);
+
   return (
     <View>
       <StatusBar hidden />
@@ -104,6 +111,7 @@ function OnBoardingScreen() {
           <View
             style={{
               alignItems: 'center',
+              justifyContent: 'center',
               borderRadius: 200,
               height: 320,
               width: 400,
@@ -114,8 +122,7 @@ function OnBoardingScreen() {
             />
           </View>
           <Text style={styles.footerText}>
-            Get 5 Days Forecast Weather Report 
-            
+            Get 5 Days Forecast Weather Report
           </Text>
 
           <Wrapper>
@@ -126,10 +133,12 @@ function OnBoardingScreen() {
               placeholder="Enter your city name"
               placeholderTextColor="#edebe8"
             />
-            <TouchableOpacity onPress={fetchLatLongHandler} style={styles.btn}>
+            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <TouchableOpacity onPress={fetchByName} style={styles.btn}>
               <Text style={styles.btnColor}>Get Report</Text>
-
             </TouchableOpacity>
+           
+            </View>
           </Wrapper>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -160,7 +169,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     alignItems: 'stretch',
-    opacity: 0.7,
+    opacity: 0.9,
     bottom: 0,
     right: 0,
   },
